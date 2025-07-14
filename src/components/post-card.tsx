@@ -154,13 +154,15 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
         )}
         <p className="whitespace-pre-wrap font-body text-lg leading-relaxed">{post.content}</p>
         <div className="flex justify-between items-center mt-6">
-          {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {post.tags.map(tag => (
-                <Badge key={tag} variant="secondary" className="text-sm bg-accent/20 text-accent-foreground border-accent/30 hover:bg-accent/30 rounded-full px-4 py-1">{tag}</Badge>
-              ))}
-            </div>
-          )}
+          <div className="flex-1">
+            {post.tags && post.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                {post.tags.map(tag => (
+                    <Badge key={tag} variant="secondary" className="text-sm bg-accent/20 text-accent-foreground border-accent/30 hover:bg-accent/30 rounded-full px-4 py-1">{tag}</Badge>
+                ))}
+                </div>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" onClick={handleLike} className="rounded-full hover:bg-destructive/10 text-destructive">
                 <Heart className={cn("h-5 w-5", isLiked && "fill-current text-destructive")} />

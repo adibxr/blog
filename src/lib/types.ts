@@ -3,6 +3,7 @@ export interface Comment {
   name: string;
   text: string;
   date: string;
+  userId: string | null;
 }
 
 export interface Post {

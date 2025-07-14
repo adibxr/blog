@@ -59,7 +59,7 @@ export default function LoginModal() {
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: error.message || "An unexpected error occurred.",
+        description: "The provided credentials are not valid.",
       });
     }
   };
@@ -67,7 +67,7 @@ export default function LoginModal() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Login</Button>
+        <Button variant="outline">Admin Login</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] glassmorphism">
         <DialogHeader>

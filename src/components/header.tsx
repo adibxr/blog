@@ -1,6 +1,6 @@
 "use client";
 
-import { Feather } from "lucide-react";
+import { School } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/login-modal";
@@ -23,10 +23,14 @@ export default function Header() {
     <header className="bg-background/80 backdrop-blur-lg sticky top-0 z-40 border-b">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-20">
-          <h1 className="text-3xl font-headline font-bold flex items-center gap-2 bg-gradient-to-r from-primary to-foreground text-transparent bg-clip-text">
-            <Feather className="w-7 h-7 text-primary" />
-            Adi
-          </h1>
+          <div className="flex items-center gap-3">
+             <div className="bg-primary text-primary-foreground p-2 rounded-lg">
+                <School className="w-7 h-7" />
+             </div>
+            <h1 className="text-3xl font-headline font-bold text-foreground">
+                School Buzz
+            </h1>
+          </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <nav>

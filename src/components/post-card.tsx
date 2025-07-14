@@ -38,24 +38,18 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
   const [commenterName, setCommenterName] = useState("");
 
   useEffect(() => {
-    const commentsRef = ref(db, `posts/${post.id}/comments`);
-    const unsubscribe = onValue(commentsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const commentsArray: Comment[] = Object.entries(data)
-          .map(([id, commentData]) => ({
-            id,
-            ...(commentData as Omit<Comment, "id">),
-          }))
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-        setComments(commentsArray);
-      } else {
-        setComments([]);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [post.id]);
+    if (post.comments) {
+      const commentsArray: Comment[] = Object.entries(post.comments)
+        .map(([id, commentData]) => ({
+          id,
+          ...commentData,
+        }))
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      setComments(commentsArray);
+    } else {
+      setComments([]);
+    }
+  }, [post.comments]);
 
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +69,7 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
   };
 
   return (
-    <Card className="glassmorphism w-full animate-in fade-in-50 duration-500 shadow-lg">
+    <Card className="glassmorphism w-full animate-in fade-in-50 duration-500 shadow-lg overflow-hidden">
       <CardHeader>
         <div className="flex justify-between items-start">
             <div>
@@ -100,7 +94,7 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => onDelete(post.id)} className="bg-destructive hover:bg-destructive/90">
+                        <AlertDialogAction onClick={() => onDelete(post.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                             Delete
                         </AlertDialogAction>
                         </AlertDialogFooter>
@@ -121,11 +115,11 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
             />
           </div>
         )}
-        <p className="whitespace-pre-wrap text-lg leading-relaxed">{post.content}</p>
+        <p className="whitespace-pre-wrap font-body text-base leading-relaxed">{post.content}</p>
         {post.tags && post.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-6">
             {post.tags.map(tag => (
-              <Badge key={tag} variant="secondary" className="text-sm">{tag}</Badge>
+              <Badge key={tag} variant="secondary" className="text-sm bg-accent/10 text-accent-foreground border-accent/20 hover:bg-accent/20">{tag}</Badge>
             ))}
           </div>
         )}
@@ -163,7 +157,7 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
             />
-            <Button type="submit" size="icon" variant="default">
+            <Button type="submit" size="icon" variant="default" className="bg-primary hover:bg-primary/90">
                 <Send className="h-4 w-4" />
                 <span className="sr-only">Add comment</span>
             </Button>

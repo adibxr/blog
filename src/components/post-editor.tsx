@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { ImagePlus, LoaderCircle, Sparkles, Tag } from "lucide-react";
+import { ImagePlus, LoaderCircle, Sparkles, Tag, Newspaper } from "lucide-react";
 
 const postSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
@@ -99,7 +99,7 @@ export default function PostEditor() {
     <Card className="glassmorphism animate-in fade-in-50 duration-500 shadow-lg">
       <CardHeader>
         <CardTitle className="font-headline text-3xl flex items-center gap-2">
-          <ImagePlus /> Create New Post
+          <Newspaper /> Create New Post
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -108,22 +108,22 @@ export default function PostEditor() {
             <FormField control={form.control} name="title" render={({ field }) => (
               <FormItem>
                 <FormLabel>Title</FormLabel>
-                <FormControl><Input placeholder="Exciting news!" {...field} /></FormControl>
+                <FormControl><Input placeholder="Exciting news from the school!" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
             <FormField control={form.control} name="content" render={({ field }) => (
               <FormItem>
                 <FormLabel>Content</FormLabel>
-                <FormControl><Textarea placeholder="Tell everyone what's happening..." className="min-h-[150px]" {...field} /></FormControl>
+                <FormControl><Textarea placeholder="Tell everyone what's happening..." className="min-h-[150px] font-body" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
              <FormField control={form.control} name="image" render={({ field }) => (
                 <FormItem>
-                    <FormLabel>Image URL (Optional)</FormLabel>
+                    <FormLabel className="flex items-center gap-2"><ImagePlus size={18}/> Image URL (Optional)</FormLabel>
                     <FormControl>
-                        <Input type="url" placeholder="https://example.com/image.png" {...field} />
+                        <Input type="url" placeholder="https://placehold.co/600x400.png" {...field} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
@@ -131,10 +131,10 @@ export default function PostEditor() {
             
             <div className="space-y-4">
               <div>
-                <FormLabel className="flex items-center gap-2 mb-2"><Tag/> Tags</FormLabel>
+                <FormLabel className="flex items-center gap-2 mb-2"><Tag size={18}/> Tags</FormLabel>
                 <div className="flex flex-wrap gap-2">
                   {tags.map(tag => (
-                    <Badge key={tag} variant="secondary" className="cursor-pointer text-sm" onClick={() => toggleTag(tag)}>{tag}</Badge>
+                    <Badge key={tag} variant="secondary" className="cursor-pointer text-sm bg-primary/10 text-primary-foreground border-primary/20 hover:bg-primary/20" onClick={() => toggleTag(tag)}>{tag}</Badge>
                   ))}
                   {tags.length === 0 && <p className="text-sm text-muted-foreground">Add some tags to categorize your post.</p>}
                 </div>
@@ -142,18 +142,18 @@ export default function PostEditor() {
 
               {(isLoadingTags || suggestedTags.length > 0) && (
                 <div>
-                   <FormLabel className="flex items-center gap-2 mb-2 text-foreground/80"><Sparkles className="text-amber-500" /> Suggested Tags</FormLabel>
+                   <FormLabel className="flex items-center gap-2 mb-2 text-foreground/80"><Sparkles className="text-amber-500" size={18}/> Suggested Tags</FormLabel>
                    <div className="flex flex-wrap gap-2 items-center">
                     {isLoadingTags && <LoaderCircle className="w-5 h-5 animate-spin" />}
                     {suggestedTags.map(tag => (
-                      <Badge key={tag} variant="outline" className="cursor-pointer text-sm" onClick={() => toggleTag(tag)}>+ {tag}</Badge>
+                      <Badge key={tag} variant="outline" className="cursor-pointer text-sm border-dashed hover:bg-accent/10" onClick={() => toggleTag(tag)}>+ {tag}</Badge>
                     ))}
                    </div>
                 </div>
               )}
             </div>
 
-            <Button type="submit" disabled={form.formState.isSubmitting} size="lg">
+            <Button type="submit" disabled={form.formState.isSubmitting} size="lg" className="bg-primary hover:bg-primary/90">
               {form.formState.isSubmitting && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
               Publish Post
             </Button>

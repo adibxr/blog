@@ -3,9 +3,21 @@ import { AuthProvider } from "@/context/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
+import { Belleza, Alegreya } from "next/font/google";
+
+const belleza = Belleza({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-belleza",
+});
+
+const alegreya = Alegreya({
+  subsets: ["latin"],
+  variable: "--font-alegreya",
+});
 
 export const metadata: Metadata = {
-  title: "Adi",
+  title: "School Buzz",
   description: "Your friendly school newsletter.",
 };
 
@@ -16,16 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
-      </head>
-      <body className="font-body antialiased">
+      <body className={`${belleza.variable} ${alegreya.variable} font-body antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

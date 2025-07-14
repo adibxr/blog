@@ -14,4 +14,5 @@ export interface Post {
   image?: string;
   tags?: string[];
   comments?: Record<string, Omit<Comment, 'id'>>;
+  likes?: number;
 }

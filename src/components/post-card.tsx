@@ -1,9 +1,10 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
-import { onValue, ref, push, set } from "firebase/database";
+import { onValue, ref, push, set, runTransaction } from "firebase/database";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/hooks/use-auth";
 import type { Post, Comment } from "@/lib/types";
@@ -13,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Send, Trash2 } from "lucide-react";
+import { Send, Trash2, Heart } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { cn } from "@/lib/utils";
 
 interface PostCardProps {
   post: Post;
@@ -36,7 +38,17 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [commenterName, setCommenterName] = useState("");
+  const [isLiked, setIsLiked] = useState(false);
+  const [localLikeCount, setLocalLikeCount] = useState(post.likes || 0);
 
+  useEffect(() => {
+    // Check local storage to see if the user has already liked this post
+    const likedPosts = JSON.parse(localStorage.getItem("likedPosts") || "[]");
+    if (likedPosts.includes(post.id)) {
+      setIsLiked(true);
+    }
+  }, [post.id]);
+  
   useEffect(() => {
     if (post.comments) {
       const commentsArray: Comment[] = Object.entries(post.comments)
@@ -49,7 +61,8 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
     } else {
       setComments([]);
     }
-  }, [post.comments]);
+    setLocalLikeCount(post.likes || 0);
+  }, [post.comments, post.likes]);
 
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +79,30 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
     });
     
     setNewComment("");
+  };
+
+  const handleLike = () => {
+    const postRef = ref(db, `posts/${post.id}/likes`);
+    const newLikedState = !isLiked;
+    
+    runTransaction(postRef, (currentLikes) => {
+      if (newLikedState) {
+        return (currentLikes || 0) + 1;
+      } else {
+        return (currentLikes || 0) - 1;
+      }
+    });
+
+    // Update local storage
+    const likedPosts: string[] = JSON.parse(localStorage.getItem("likedPosts") || "[]");
+    if (newLikedState) {
+      localStorage.setItem("likedPosts", JSON.stringify([...likedPosts, post.id]));
+    } else {
+      localStorage.setItem("likedPosts", JSON.stringify(likedPosts.filter(id => id !== post.id)));
+    }
+
+    setIsLiked(newLikedState);
+    setLocalLikeCount(prev => newLikedState ? prev + 1 : prev - 1);
   };
 
   return (
@@ -116,13 +153,21 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
           </div>
         )}
         <p className="whitespace-pre-wrap font-body text-lg leading-relaxed">{post.content}</p>
-        {post.tags && post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-6">
-            {post.tags.map(tag => (
-              <Badge key={tag} variant="secondary" className="text-sm bg-accent/20 text-accent-foreground border-accent/30 hover:bg-accent/30 rounded-full px-4 py-1">{tag}</Badge>
-            ))}
+        <div className="flex justify-between items-center mt-6">
+          {post.tags && post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {post.tags.map(tag => (
+                <Badge key={tag} variant="secondary" className="text-sm bg-accent/20 text-accent-foreground border-accent/30 hover:bg-accent/30 rounded-full px-4 py-1">{tag}</Badge>
+              ))}
+            </div>
+          )}
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={handleLike} className="rounded-full hover:bg-destructive/10 text-destructive">
+                <Heart className={cn("h-5 w-5", isLiked && "fill-current text-destructive")} />
+            </Button>
+            <span className="text-sm font-medium text-muted-foreground">{localLikeCount}</span>
           </div>
-        )}
+        </div>
       </CardContent>
       <CardFooter className="flex-col items-start gap-4">
         <h4 className="font-headline text-xl">Comments</h4>

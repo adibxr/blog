@@ -17,6 +17,7 @@ export default function Home() {
   const { isAdmin } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -57,9 +58,14 @@ export default function Home() {
     }
   };
 
+  const filteredPosts = posts.filter((post) =>
+    post.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+
   return (
     <>
-      <Header />
+      <Header onSearch={setSearchQuery} />
       <main className="container mx-auto px-4 py-8 flex-grow">
         <div className="max-w-3xl mx-auto flex flex-col gap-10">
           {isAdmin && <PostEditor />}
@@ -68,16 +74,20 @@ export default function Home() {
               <Skeleton className="h-80 w-full rounded-2xl" />
               <Skeleton className="h-80 w-full rounded-2xl" />
             </div>
-          ) : posts.length > 0 ? (
-            posts.map((post) => <PostCard key={post.id} post={post} onDelete={handleDeletePost} />)
+          ) : filteredPosts.length > 0 ? (
+            filteredPosts.map((post) => <PostCard key={post.id} post={post} onDelete={handleDeletePost} />)
           ) : (
             <div className="text-center text-muted-foreground py-24 flex flex-col items-center gap-6">
               <PenSquare className="w-24 h-24 text-primary/30" />
-              <h2 className="text-3xl font-headline">It's quiet in here... for now.</h2>
-              {isAdmin ? (
+              <h2 className="text-3xl font-headline">
+                {searchQuery ? "No posts found" : "It's quiet in here... for now."}
+              </h2>
+              {isAdmin && !searchQuery ? (
                  <p className="mt-2 text-lg">Why not create the first post?</p>
               ) : (
-                <p className="mt-2 text-lg">Check back later for new posts.</p>
+                <p className="mt-2 text-lg">
+                  {searchQuery ? "Try a different search term." : "Check back later for new posts."}
+                </p>
               )}
             </div>
           )}

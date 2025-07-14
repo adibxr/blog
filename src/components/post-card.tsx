@@ -69,23 +69,23 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
   };
 
   return (
-    <Card className="glassmorphism w-full animate-in fade-in-50 duration-500 shadow-lg overflow-hidden">
+    <Card className="glassmorphism w-full animate-in fade-in-50 duration-500 shadow-xl overflow-hidden rounded-3xl">
       <CardHeader>
         <div className="flex justify-between items-start">
             <div>
                 <CardTitle className="font-headline text-4xl">{post.title}</CardTitle>
-                <CardDescription>
+                <CardDescription className="text-base">
                 Posted on {format(new Date(post.date), "MMMM d, yyyy 'at' h:mm a")}
                 </CardDescription>
             </div>
             {isAdmin && (
                  <AlertDialog>
                     <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10 rounded-full">
                             <Trash2 className="h-5 w-5" />
                         </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent>
+                    <AlertDialogContent className="rounded-2xl">
                         <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -93,8 +93,8 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
                         </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => onDelete(post.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => onDelete(post.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full">
                             Delete
                         </AlertDialogAction>
                         </AlertDialogFooter>
@@ -105,7 +105,7 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
       </CardHeader>
       <CardContent>
         {post.image && (
-          <div className="relative w-full h-80 mb-6 rounded-xl overflow-hidden shadow-inner">
+          <div className="relative w-full h-80 mb-6 rounded-2xl overflow-hidden shadow-inner">
             <Image
               src={post.image}
               alt={post.title}
@@ -115,11 +115,11 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
             />
           </div>
         )}
-        <p className="whitespace-pre-wrap font-body text-base leading-relaxed">{post.content}</p>
+        <p className="whitespace-pre-wrap font-body text-lg leading-relaxed">{post.content}</p>
         {post.tags && post.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-6">
             {post.tags.map(tag => (
-              <Badge key={tag} variant="secondary" className="text-sm bg-accent/10 text-accent-foreground border-accent/20 hover:bg-accent/20">{tag}</Badge>
+              <Badge key={tag} variant="secondary" className="text-sm bg-accent/20 text-accent-foreground border-accent/30 hover:bg-accent/30 rounded-full px-4 py-1">{tag}</Badge>
             ))}
           </div>
         )}
@@ -130,9 +130,9 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
             {comments.map((comment) => (
               <div key={comment.id} className="flex items-start gap-3">
                 <Avatar className="h-9 w-9">
-                  <AvatarFallback>{comment.name.charAt(0)}</AvatarFallback>
+                  <AvatarFallback className="bg-primary/20">{comment.name.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <div className="flex-1 bg-secondary rounded-lg p-3">
+                <div className="flex-1 bg-muted/50 rounded-xl p-3">
                   <div className="flex justify-between items-center">
                     <p className="font-semibold text-sm">{comment.name}</p>
                     <p className="text-xs text-muted-foreground">{format(new Date(comment.date), "p, MMM d")}</p>
@@ -146,18 +146,18 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
         <form onSubmit={handleAddComment} className="w-full flex flex-col sm:flex-row items-start gap-2 pt-4 mt-4 border-t">
           <Input 
             placeholder="Your name (optional)" 
-            className="w-full sm:w-1/3"
+            className="w-full sm:w-1/3 rounded-full"
             value={commenterName}
             onChange={(e) => setCommenterName(e.target.value)}
           />
           <div className="w-full flex-1 flex gap-2">
             <Input 
                 placeholder="Write a comment..." 
-                className="flex-1"
+                className="flex-1 rounded-full"
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
             />
-            <Button type="submit" size="icon" variant="default" className="bg-primary hover:bg-primary/90">
+            <Button type="submit" size="icon" variant="default" className="bg-primary hover:bg-primary/90 rounded-full">
                 <Send className="h-4 w-4" />
                 <span className="sr-only">Add comment</span>
             </Button>

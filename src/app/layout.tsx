@@ -3,17 +3,17 @@ import { AuthProvider } from "@/context/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
-import { Belleza, Alegreya } from "next/font/google";
+import { Inter, Bellefair } from "next/font/google";
 
-const belleza = Belleza({
+const inter = Inter({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-belleza",
+  variable: "--font-body",
 });
 
-const alegreya = Alegreya({
+const bellefair = Bellefair({
   subsets: ["latin"],
-  variable: "--font-alegreya",
+  weight: "400",
+  variable: "--font-headline",
 });
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${belleza.variable} ${alegreya.variable} font-body antialiased`}>
+      <body className={`${inter.variable} ${bellefair.variable} font-body antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

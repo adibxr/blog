@@ -1,6 +1,6 @@
 "use client";
 
-import { School } from "lucide-react";
+import { School, BookOpen } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/login-modal";
@@ -23,11 +23,11 @@ export default function Header() {
     <header className="bg-background/80 backdrop-blur-lg sticky top-0 z-40 border-b">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-20">
-          <div className="flex items-center gap-3">
-             <div className="bg-primary text-primary-foreground p-2 rounded-lg">
-                <School className="w-7 h-7" />
+          <div className="flex items-center gap-4">
+             <div className="bg-primary text-primary-foreground p-3 rounded-2xl shadow-md">
+                <School className="w-6 h-6" />
              </div>
-            <h1 className="text-3xl font-headline font-bold text-foreground">
+            <h1 className="text-3xl font-headline font-bold text-foreground tracking-wider">
                 School Buzz
             </h1>
           </div>
@@ -35,7 +35,7 @@ export default function Header() {
             <ThemeToggle />
             <nav>
               {loading ? null : user ? (
-                <Button onClick={handleLogout} variant="outline">
+                <Button onClick={handleLogout} variant="outline" className="rounded-full">
                   Logout
                 </Button>
               ) : (

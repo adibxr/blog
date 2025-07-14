@@ -57,13 +57,14 @@ export default function PostEditor() {
     setIsLoadingTags(true);
     try {
       const result = await suggestTags({ postContent });
-      setSuggestedTags(result.tags.filter(t => !tags.includes(t)));
+      // We keep the original result to filter against later
+      setSuggestedTags(result.tags);
     } catch (error) {
       console.error("Failed to suggest tags:", error);
     } finally {
       setIsLoadingTags(false);
     }
-  }, [tags]);
+  }, []);
 
   const debouncedSuggestTags = useMemo(() => debounce(getTagSuggestions, 1000), [getTagSuggestions]);
 
@@ -74,7 +75,6 @@ export default function PostEditor() {
 
   const toggleTag = (tag: string) => {
     setTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
-    setSuggestedTags(prev => prev.filter(t => t !== tag));
   };
   
   const onSubmit = async (data: PostFormValues) => {
@@ -94,6 +94,8 @@ export default function PostEditor() {
       toast({ variant: "destructive", title: "Failed to publish post", description: (error as Error).message });
     }
   };
+
+  const availableSuggestions = suggestedTags.filter(t => !tags.includes(t));
 
   return (
     <Card className="glassmorphism animate-in fade-in-50 duration-500 shadow-lg">
@@ -140,12 +142,12 @@ export default function PostEditor() {
                 </div>
               </div>
 
-              {(isLoadingTags || suggestedTags.length > 0) && (
+              {(isLoadingTags || availableSuggestions.length > 0) && (
                 <div>
                    <FormLabel className="flex items-center gap-2 mb-2 text-foreground/80"><Sparkles className="text-amber-500" size={18}/> Suggested Tags</FormLabel>
                    <div className="flex flex-wrap gap-2 items-center">
                     {isLoadingTags && <LoaderCircle className="w-5 h-5 animate-spin" />}
-                    {suggestedTags.map(tag => (
+                    {availableSuggestions.map(tag => (
                       <Badge key={tag} variant="outline" className="cursor-pointer text-sm border-dashed hover:bg-accent/10" onClick={() => toggleTag(tag)}>+ {tag}</Badge>
                     ))}
                    </div>

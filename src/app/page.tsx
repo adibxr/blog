@@ -1,3 +1,63 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { onValue, ref, query, orderByChild } from "firebase/database";
+import { db } from "@/lib/firebase";
+import type { Post } from "@/lib/types";
+
+import { useAuth } from "@/hooks/use-auth";
+import Header from "@/components/header";
+import PostEditor from "@/components/post-editor";
+import PostCard from "@/components/post-card";
+import { Skeleton } from "@/components/ui/skeleton";
+
 export default function Home() {
-  return <></>;
+  const { isAdmin } = useAuth();
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const postsRef = query(ref(db, "posts"));
+    const unsubscribe = onValue(postsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const postsArray: Post[] = Object.entries(data)
+          .map(([id, postData]) => ({
+            id,
+            ...(postData as Omit<Post, "id">),
+          }))
+          .reverse();
+        setPosts(postsArray);
+      } else {
+        setPosts([]);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <>
+      <Header />
+      <main className="container mx-auto px-4 py-8 flex-grow">
+        <div className="max-w-4xl mx-auto flex flex-col gap-8">
+          {isAdmin && <PostEditor />}
+          {loading ? (
+            <div className="space-y-8">
+              <Skeleton className="h-64 w-full rounded-2xl" />
+              <Skeleton className="h-64 w-full rounded-2xl" />
+            </div>
+          ) : posts.length > 0 ? (
+            posts.map((post) => <PostCard key={post.id} post={post} />)
+          ) : (
+            <div className="text-center text-muted-foreground py-16">
+              <h2 className="text-2xl font-headline">No news yet!</h2>
+              <p>Check back later for updates.</p>
+            </div>
+          )}
+        </div>
+      </main>
+    </>
+  );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -68,7 +68,7 @@ export default function PostEditor() {
 
   const debouncedSuggestTags = useMemo(() => debounce(getTagSuggestions, 1000), [getTagSuggestions]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     debouncedSuggestTags(contentValue);
   }, [contentValue, debouncedSuggestTags]);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { onValue, ref, query } from "firebase/database";
+import { onValue, ref, query, remove } from "firebase/database";
 import { db } from "@/lib/firebase";
 import type { Post } from "@/lib/types";
 
@@ -10,11 +10,13 @@ import Header from "@/components/header";
 import PostEditor from "@/components/post-editor";
 import PostCard from "@/components/post-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
   const { isAdmin } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const postsRef = query(ref(db, "posts"));
@@ -36,6 +38,23 @@ export default function Home() {
 
     return () => unsubscribe();
   }, []);
+  
+  const handleDeletePost = async (postId: string) => {
+    try {
+      await remove(ref(db, `posts/${postId}`));
+      toast({
+        title: "Post Deleted",
+        description: "The post has been successfully removed.",
+      });
+    } catch (error) {
+       toast({
+        variant: "destructive",
+        title: "Error Deleting Post",
+        description: "There was an error deleting the post. Please try again.",
+      });
+      console.error("Error deleting post: ", error);
+    }
+  };
 
   return (
     <>
@@ -49,7 +68,7 @@ export default function Home() {
               <Skeleton className="h-80 w-full rounded-2xl" />
             </div>
           ) : posts.length > 0 ? (
-            posts.map((post) => <PostCard key={post.id} post={post} />)
+            posts.map((post) => <PostCard key={post.id} post={post} onDelete={handleDeletePost} />)
           ) : (
             <div className="text-center text-muted-foreground py-24">
               <h2 className="text-3xl font-headline">No news yet!</h2>

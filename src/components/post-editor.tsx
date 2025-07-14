@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { push, ref, set } from "firebase/database";
-import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { suggestTags } from "@/ai/flows/suggest-tags";
 
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,7 @@ import { ImagePlus, LoaderCircle, Sparkles, Tag } from "lucide-react";
 const postSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
   content: z.string().min(20, "Content must be at least 20 characters."),
-  image: z.any().optional(),
+  image: z.string().url({ message: "Please enter a valid image URL." }).optional().or(z.literal('')),
 });
 
 type PostFormValues = z.infer<typeof postSchema>;
@@ -46,7 +45,7 @@ export default function PostEditor() {
 
   const form = useForm<PostFormValues>({
     resolver: zodResolver(postSchema),
-    defaultValues: { title: "", content: "" },
+    defaultValues: { title: "", content: "", image: "" },
   });
   const contentValue = form.watch("content");
 
@@ -68,7 +67,7 @@ export default function PostEditor() {
 
   const debouncedSuggestTags = useMemo(() => debounce(getTagSuggestions, 1000), [getTagSuggestions]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     debouncedSuggestTags(contentValue);
   }, [contentValue, debouncedSuggestTags]);
 
@@ -79,32 +78,11 @@ export default function PostEditor() {
   };
   
   const onSubmit = async (data: PostFormValues) => {
-    const postRef = push(ref(db, "posts"));
-    const postKey = postRef.key;
-    if (!postKey) {
-      toast({ variant: "destructive", title: "Failed to create post key." });
-      return;
-    }
-
-    let imageUrl = "";
-    if (data.image && data.image.length > 0) {
-      const file = data.image[0];
-      const imagePath = `posts/${postKey}/${file.name}`;
-      const imageRef = storageRef(storage, imagePath);
-      try {
-        const snapshot = await uploadBytes(imageRef, file);
-        imageUrl = await getDownloadURL(snapshot.ref);
-      } catch (error) {
-        toast({ variant: "destructive", title: "Image upload failed", description: (error as Error).message });
-        return;
-      }
-    }
-
     try {
-      await set(postRef, {
+      await set(push(ref(db, "posts")), {
         title: data.title,
         content: data.content,
-        image: imageUrl,
+        image: data.image || "",
         tags: tags,
         date: new Date().toISOString(),
       });
@@ -141,11 +119,11 @@ export default function PostEditor() {
                 <FormMessage />
               </FormItem>
             )} />
-             <FormField control={form.control} name="image" render={({ field: { onChange, value, ...rest } }) => (
+             <FormField control={form.control} name="image" render={({ field }) => (
                 <FormItem>
-                    <FormLabel>Image</FormLabel>
+                    <FormLabel>Image URL (Optional)</FormLabel>
                     <FormControl>
-                        <Input type="file" accept="image/*" onChange={(e) => onChange(e.target.files)} {...rest} />
+                        <Input type="url" placeholder="https://example.com/image.png" {...field} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>

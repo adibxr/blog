@@ -13,14 +13,26 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Send } from "lucide-react";
+import { Send, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface PostCardProps {
   post: Post;
+  onDelete: (postId: string) => void;
 }
 
-export default function PostCard({ post }: PostCardProps) {
-  const { user } = useAuth();
+export default function PostCard({ post, onDelete }: PostCardProps) {
+  const { user, isAdmin } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [commenterName, setCommenterName] = useState("");
@@ -65,10 +77,37 @@ export default function PostCard({ post }: PostCardProps) {
   return (
     <Card className="glassmorphism w-full animate-in fade-in-50 duration-500 shadow-lg">
       <CardHeader>
-        <CardTitle className="font-headline text-4xl">{post.title}</CardTitle>
-        <CardDescription>
-          Posted on {format(new Date(post.date), "MMMM d, yyyy 'at' h:mm a")}
-        </CardDescription>
+        <div className="flex justify-between items-start">
+            <div>
+                <CardTitle className="font-headline text-4xl">{post.title}</CardTitle>
+                <CardDescription>
+                Posted on {format(new Date(post.date), "MMMM d, yyyy 'at' h:mm a")}
+                </CardDescription>
+            </div>
+            {isAdmin && (
+                 <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                            <Trash2 className="h-5 w-5" />
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the post and all its comments.
+                        </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => onDelete(post.id)} className="bg-destructive hover:bg-destructive/90">
+                            Delete
+                        </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            )}
+        </div>
       </CardHeader>
       <CardContent>
         {post.image && (

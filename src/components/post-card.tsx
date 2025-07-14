@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
-import { onValue, ref, push, serverTimestamp, set } from "firebase/database";
+import { onValue, ref, push, set } from "firebase/database";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/hooks/use-auth";
 import type { Post, Comment } from "@/lib/types";
@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Send } from "lucide-react";
 
 interface PostCardProps {
@@ -63,54 +63,54 @@ export default function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <Card className="glassmorphism w-full animate-in fade-in-50 duration-500">
+    <Card className="glassmorphism w-full animate-in fade-in-50 duration-500 shadow-lg">
       <CardHeader>
-        <CardTitle className="font-headline text-3xl">{post.title}</CardTitle>
+        <CardTitle className="font-headline text-4xl">{post.title}</CardTitle>
         <CardDescription>
           Posted on {format(new Date(post.date), "MMMM d, yyyy 'at' h:mm a")}
         </CardDescription>
       </CardHeader>
       <CardContent>
         {post.image && (
-          <div className="relative w-full h-64 mb-4 rounded-lg overflow-hidden">
+          <div className="relative w-full h-80 mb-6 rounded-xl overflow-hidden shadow-inner">
             <Image
               src={post.image}
               alt={post.title}
-              layout="fill"
-              objectFit="cover"
+              fill
+              className="object-cover"
               data-ai-hint="school event"
             />
           </div>
         )}
-        <p className="whitespace-pre-wrap leading-relaxed">{post.content}</p>
+        <p className="whitespace-pre-wrap text-lg leading-relaxed">{post.content}</p>
         {post.tags && post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-4">
+          <div className="flex flex-wrap gap-2 mt-6">
             {post.tags.map(tag => (
-              <Badge key={tag} variant="secondary">{tag}</Badge>
+              <Badge key={tag} variant="secondary" className="text-sm">{tag}</Badge>
             ))}
           </div>
         )}
       </CardContent>
       <CardFooter className="flex-col items-start gap-4">
-        <h4 className="font-headline text-lg">Comments</h4>
+        <h4 className="font-headline text-xl">Comments</h4>
         <div className="w-full space-y-4">
             {comments.map((comment) => (
               <div key={comment.id} className="flex items-start gap-3">
-                <Avatar className="h-8 w-8">
+                <Avatar className="h-9 w-9">
                   <AvatarFallback>{comment.name.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <div className="flex-1 bg-background/50 rounded-lg p-3">
+                <div className="flex-1 bg-secondary rounded-lg p-3">
                   <div className="flex justify-between items-center">
                     <p className="font-semibold text-sm">{comment.name}</p>
                     <p className="text-xs text-muted-foreground">{format(new Date(comment.date), "p, MMM d")}</p>
                   </div>
-                  <p className="text-sm">{comment.text}</p>
+                  <p className="text-sm mt-1">{comment.text}</p>
                 </div>
               </div>
             ))}
             {comments.length === 0 && <p className="text-sm text-muted-foreground">No comments yet. Be the first to comment!</p>}
         </div>
-        <form onSubmit={handleAddComment} className="w-full flex flex-col sm:flex-row items-start gap-2 pt-4 border-t">
+        <form onSubmit={handleAddComment} className="w-full flex flex-col sm:flex-row items-start gap-2 pt-4 mt-4 border-t">
           <Input 
             placeholder="Your name (optional)" 
             className="w-full sm:w-1/3"

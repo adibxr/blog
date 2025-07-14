@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -68,7 +68,7 @@ export default function PostEditor() {
 
   const debouncedSuggestTags = useMemo(() => debounce(getTagSuggestions, 1000), [getTagSuggestions]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     debouncedSuggestTags(contentValue);
   }, [contentValue, debouncedSuggestTags]);
 
@@ -118,10 +118,10 @@ export default function PostEditor() {
   };
 
   return (
-    <Card className="glassmorphism animate-in fade-in-50 duration-500">
+    <Card className="glassmorphism animate-in fade-in-50 duration-500 shadow-lg">
       <CardHeader>
-        <CardTitle className="font-headline text-2xl flex items-center gap-2">
-          <ImagePlus /> New Post
+        <CardTitle className="font-headline text-3xl flex items-center gap-2">
+          <ImagePlus /> Create New Post
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -156,7 +156,7 @@ export default function PostEditor() {
                 <FormLabel className="flex items-center gap-2 mb-2"><Tag/> Tags</FormLabel>
                 <div className="flex flex-wrap gap-2">
                   {tags.map(tag => (
-                    <Badge key={tag} variant="secondary" className="cursor-pointer" onClick={() => toggleTag(tag)}>{tag}</Badge>
+                    <Badge key={tag} variant="secondary" className="cursor-pointer text-sm" onClick={() => toggleTag(tag)}>{tag}</Badge>
                   ))}
                   {tags.length === 0 && <p className="text-sm text-muted-foreground">Add some tags to categorize your post.</p>}
                 </div>
@@ -164,18 +164,18 @@ export default function PostEditor() {
 
               {(isLoadingTags || suggestedTags.length > 0) && (
                 <div>
-                   <FormLabel className="flex items-center gap-2 mb-2"><Sparkles className="text-accent" /> Suggested Tags</FormLabel>
+                   <FormLabel className="flex items-center gap-2 mb-2 text-foreground/80"><Sparkles className="text-amber-500" /> Suggested Tags</FormLabel>
                    <div className="flex flex-wrap gap-2 items-center">
                     {isLoadingTags && <LoaderCircle className="w-5 h-5 animate-spin" />}
                     {suggestedTags.map(tag => (
-                      <Badge key={tag} variant="outline" className="cursor-pointer" onClick={() => toggleTag(tag)}>+ {tag}</Badge>
+                      <Badge key={tag} variant="outline" className="cursor-pointer text-sm" onClick={() => toggleTag(tag)}>+ {tag}</Badge>
                     ))}
                    </div>
                 </div>
               )}
             </div>
 
-            <Button type="submit" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting} size="lg">
               {form.formState.isSubmitting && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
               Publish Post
             </Button>

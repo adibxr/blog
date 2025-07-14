@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#e0eaff] to-[#f9fcff]">
+      <div className="flex items-center justify-center min-h-screen bg-background">
         <LoaderCircle className="w-12 h-12 animate-spin text-primary" />
       </div>
     );

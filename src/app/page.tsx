@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { onValue, ref, query, orderByChild } from "firebase/database";
+import { onValue, ref, query } from "firebase/database";
 import { db } from "@/lib/firebase";
 import type { Post } from "@/lib/types";
 
@@ -41,19 +41,19 @@ export default function Home() {
     <>
       <Header />
       <main className="container mx-auto px-4 py-8 flex-grow">
-        <div className="max-w-4xl mx-auto flex flex-col gap-8">
+        <div className="max-w-3xl mx-auto flex flex-col gap-10">
           {isAdmin && <PostEditor />}
           {loading ? (
-            <div className="space-y-8">
-              <Skeleton className="h-64 w-full rounded-2xl" />
-              <Skeleton className="h-64 w-full rounded-2xl" />
+            <div className="space-y-10">
+              <Skeleton className="h-80 w-full rounded-2xl" />
+              <Skeleton className="h-80 w-full rounded-2xl" />
             </div>
           ) : posts.length > 0 ? (
             posts.map((post) => <PostCard key={post.id} post={post} />)
           ) : (
-            <div className="text-center text-muted-foreground py-16">
-              <h2 className="text-2xl font-headline">No news yet!</h2>
-              <p>Check back later for updates.</p>
+            <div className="text-center text-muted-foreground py-24">
+              <h2 className="text-3xl font-headline">No news yet!</h2>
+              <p className="mt-2 text-lg">Check back later for updates.</p>
             </div>
           )}
         </div>

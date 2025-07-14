@@ -11,7 +11,7 @@ import PostEditor from "@/components/post-editor";
 import PostCard from "@/components/post-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { School } from "lucide-react";
+import { PenSquare } from "lucide-react";
 
 export default function Home() {
   const { isAdmin } = useAuth();
@@ -72,9 +72,13 @@ export default function Home() {
             posts.map((post) => <PostCard key={post.id} post={post} onDelete={handleDeletePost} />)
           ) : (
             <div className="text-center text-muted-foreground py-24 flex flex-col items-center gap-6">
-              <School className="w-24 h-24 text-primary/30" />
-              <h2 className="text-3xl font-headline">No news yet!</h2>
-              <p className="mt-2 text-lg">Check back later for updates from the hive.</p>
+              <PenSquare className="w-24 h-24 text-primary/30" />
+              <h2 className="text-3xl font-headline">It's quiet in here... for now.</h2>
+              {isAdmin ? (
+                 <p className="mt-2 text-lg">Why not create the first post?</p>
+              ) : (
+                <p className="mt-2 text-lg">Check back later for new posts.</p>
+              )}
             </div>
           )}
         </div>

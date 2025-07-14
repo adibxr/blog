@@ -17,8 +17,8 @@ const bellefair = Bellefair({
 });
 
 export const metadata: Metadata = {
-  title: "School Buzz",
-  description: "Your friendly school newsletter.",
+  title: "Adi",
+  description: "Your space to create and share.",
 };
 
 export default function RootLayout({

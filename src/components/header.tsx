@@ -1,6 +1,6 @@
 "use client";
 
-import { School, BookOpen } from "lucide-react";
+import { PenSquare } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import LoginModal from "@/components/login-modal";
@@ -25,10 +25,10 @@ export default function Header() {
         <div className="flex justify-between items-center h-20">
           <div className="flex items-center gap-4">
              <div className="bg-primary text-primary-foreground p-3 rounded-2xl shadow-md">
-                <School className="w-6 h-6" />
+                <PenSquare className="w-6 h-6" />
              </div>
             <h1 className="text-3xl font-headline font-bold text-foreground tracking-wider">
-                School Buzz
+                Adi
             </h1>
           </div>
           <div className="flex items-center gap-2">
